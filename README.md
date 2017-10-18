@@ -2,11 +2,14 @@
 An extractor for Catan's (https://archive.org/details/DeKolonistenVanCatanZeevaarders) .lib archive file format. 
 
 
-### Installation
+### Installation from source
 
 ```
 go get -u github.com/Andoryuuta/CatanExtract
 ```
+
+### Download binary (Windows users)
+You can simply download the latest release binary from [here](https://github.com/Andoryuuta/CatanExtract/releases).
 
 ### Usage Example
 ```
