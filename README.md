@@ -12,7 +12,7 @@ go get -u github.com/Andoryuuta/CatanExtract
 ```
 CatanExtract xspeak.lib
 ```
-
+OR
 ```
 CatanExtract 2speak.lib
 ```
