@@ -1,9 +1,10 @@
 package main
 
 type Entry struct {
-	Name string
-	Size uint32
-	Data []byte
+	Name   string
+	Offset uint32
+	Size   uint32
+	Data   []byte
 }
 
 func XORCrypt(entry *Entry) {
