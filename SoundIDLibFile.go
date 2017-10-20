@@ -3,8 +3,14 @@ package main
 import (
 	"encoding/binary"
 	"fmt"
+	"io"
 	"log"
 	"os"
+)
+
+const (
+	SIDHeaderSize = 0x10
+	SIDEntrySize  = 0xC
 )
 
 func readSoundIDHeaderInfo(f *os.File) (bool, uint32, uint32, uint32, error) {
@@ -41,9 +47,9 @@ func readSoundIDHeaderInfo(f *os.File) (bool, uint32, uint32, uint32, error) {
 }
 
 func readSoundIDEntryInfo(f *os.File) (*Entry, error) {
-	var unk1, fileSize, unk2 uint32
+	var fileOffset, fileSize, unk2 uint32
 
-	err := binary.Read(f, binary.LittleEndian, &unk1)
+	err := binary.Read(f, binary.LittleEndian, &fileOffset)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +64,7 @@ func readSoundIDEntryInfo(f *os.File) (*Entry, error) {
 		return nil, err
 	}
 
-	return &Entry{Size: fileSize}, nil
+	return &Entry{Size: fileSize, Offset: fileOffset}, nil
 }
 
 func getSoundIDEntries(f *os.File) ([]*Entry, bool, error) {
@@ -92,9 +98,19 @@ func getSoundIDEntries(f *os.File) ([]*Entry, bool, error) {
 		entries = append(entries, entry)
 	}
 
+	// Calculate the start of data section.
+	startOfDataSection := SIDHeaderSize + (SIDEntrySize * entriesCount)
+
 	// Read entry data.
 	log.Println("Reading SID-based file entries data.")
 	for _, entry := range entries {
+		// Seek to the entry data.
+		_, err = f.Seek(int64(startOfDataSection+entry.Offset), io.SeekStart)
+		if err != nil {
+			return nil, false, err
+		}
+
+		// Make a buffer for the data and read into it.
 		entry.Data = make([]byte, entry.Size)
 
 		err = binary.Read(f, binary.LittleEndian, &entry.Data)

@@ -85,14 +85,13 @@ func getNamedEntries(f *os.File) ([]*Entry, bool, error) {
 		entries = append(entries, entry)
 	}
 
-	// Calculate start of data section.
+	// Calculate the start of data section.
 	startOfDataSection := namedHeaderSize + (namedEntrySize * entriesCount)
 
 	// Read entry data.
 	log.Println("Reading named file entries data.")
 	for _, entry := range entries {
 		// Seek to the entry data.
-		log.Printf("at f.Seek - entry.Offset 0x%X\n", entry.Offset)
 		_, err = f.Seek(int64(startOfDataSection+entry.Offset), io.SeekStart)
 		if err != nil {
 			return nil, false, err
